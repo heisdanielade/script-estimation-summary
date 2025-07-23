@@ -1,6 +1,8 @@
-from plane_client import PlaneClient
 import pyfiglet
 from colorama import init, Fore
+
+from plane_client import PlaneClient
+
 init(autoreset=True)
 
 
@@ -25,15 +27,20 @@ if __name__ == "__main__":
 
     client = PlaneClient()
 
+    project = client.get_project_details()
+    cycle = client.get_cycle_details()
     issues = client.get_issues_by_cycle()
     estimate_map = None  # client.get_estimate_value_map()
     TOTAL_ESTIMATION_POINTS = None
 
     print("=" * 50)
+    print(Fore.GREEN + f"📁 Project: {project.get("name", "--")}\n")
+    print(Fore.GREEN + f"🔁 Cycle: {cycle.get("name", "--")}")
 
+    print("-" * 50)
 
     print(Fore.GREEN +
-          f"Fetched {len(issues)} issues:\n")
+          f"Fetched {len(issues)} issues in {cycle.get("name", "--")} cycle:\n")
 
     for issue in issues:
         print(Fore.YELLOW +
