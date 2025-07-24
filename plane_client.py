@@ -54,7 +54,7 @@ class PlaneClient:
             raise PlaneAPIError(
                 f"(e) Error fetching project details: {e}") from e
         except Exception as e:
-            raise Exception(f"(e) Unexpected error occured: {e}") from e
+            raise PlaneAPIError(f"(e) Unexpected error occured: {e}") from e
 
         return response.json()
 
@@ -80,7 +80,7 @@ class PlaneClient:
             raise PlaneAPIError(
                 f"(e) Error fetching project details: {e}") from e
         except Exception as e:
-            raise Exception(f"(e) Unexpected error occured: {e}") from e
+            raise PlaneAPIError(f"(e) Unexpected error occured: {e}") from e
 
         return response.json()
 
@@ -109,6 +109,8 @@ class PlaneClient:
             response.raise_for_status()
         except requests.exceptions.RequestException as e:
             raise PlaneAPIError(f"(e) Error fetching isssues: {e}") from e
+        except Exception as e:
+            raise PlaneAPIError(f"(e) Unexpected error occured: {e}") from e
 
         data = response.json().get("results", [])
 
