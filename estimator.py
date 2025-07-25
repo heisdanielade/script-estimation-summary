@@ -9,9 +9,8 @@ class Estimator:
         self.issues = issues
 
     def get_total_estimate_points(self) -> int:
-        total: int = 0
 
-        for item in self.issues:
-            total += int(item.get("estimate_point")["value"])
-
-        return total
+        return sum(
+            int(item.get("estimate_point")['value'])
+            for item in self.issues
+        )
