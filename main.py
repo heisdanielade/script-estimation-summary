@@ -1,24 +1,13 @@
+from typing import Callable
+
 import pyfiglet
 from colorama import init, Fore
+from tabulate import tabulate
 
 from plane_client import PlaneClient
+from estimator import Estimator
 
 init(autoreset=True)
-
-
-# def main() -> None:
-#     ascii_art = pyfiglet.figlet_format("Cycle Info", font="slant")
-#     print(ascii_art)
-
-#     while True:
-#         try:
-#             command = input("script>> ").strip()
-#             if command in ("exit", "quit", "q"):
-#                 print("\nGoodbye!\n")
-#                 break
-#         except (KeyboardInterrupt, EOFError):
-#             print("\nGoodbye!\n")
-#             break
 
 
 if __name__ == "__main__":
@@ -26,32 +15,50 @@ if __name__ == "__main__":
     print(ascii_art)
 
     client = PlaneClient()
-
     project = client.get_project_details()
     cycle = client.get_cycle_details()
     issues = client.get_issues_by_cycle()
-    estimate_map = None  # client.get_estimate_value_map()
-    TOTAL_ESTIMATION_POINTS = None
+
+    estimator = Estimator(issues=issues)
+    TOTAL_ESTIMATION_POINTS = estimator.get_total_estimate_points()
 
     print("=" * 50)
-    print(Fore.GREEN + f"📁 Project: {project.get("name", "--")}\n")
-    print(Fore.GREEN + f"🔁 Cycle: {cycle.get("name", "--")}")
-
+    print(Fore.GREEN +
+          f"📁 Project: \033[1m{project.get("name", "--")}\033[0m\n")
+    print(Fore.GREEN + f"🔁 Cycle: \033[1m{cycle.get("name", "--")}\033[0m")
     print("-" * 50)
 
     print(Fore.GREEN +
-          f"Fetched {len(issues)} issues in {cycle.get("name", "--")} cycle:\n")
+          f"📝 Fetched {len(issues)} issues in {cycle.get("name", "--")} cycle:\n")
 
-    for issue in issues:
-        print(Fore.YELLOW +
-              f" - {issue.get('name')} (Estimate: {issue.get('estimate_point', 0)} SP)")
+    headers = [
+        "Issue",
+        "Priority",
+        "Estimate Point",
+        "Start Date",
+        "Target Date",
+        "Completed At"
+    ]
 
-    print("-" * 50)
+    check_availability: Callable[[str],
+                                 str] = lambda val: val if val is not None else "n/a"
+
+    table = [
+        (
+            i.get('name'),
+            i.get('priority'),
+            i.get('estimate_point')['value'],
+            check_availability(i.get('start_date')),
+            check_availability(i.get('target_date')),
+            check_availability(i.get('completed_at'))
+        )
+        for i in issues
+    ]
+
+    print(tabulate(table, headers=headers, showindex=range(
+        1, len(table)+1), tablefmt="double_grid", numalign="center") + "\n")
+
     print(Fore.GREEN +
-          f"✅ Total Estimation Points: {TOTAL_ESTIMATION_POINTS} SP")
-    print("=" * 50)
+          f"✅ Total Estimation Points: \033[1m{TOTAL_ESTIMATION_POINTS} SP\033[0m")
 
-    # for issue in issues:
-    #     est_id = issue.get("estimate_point")
-    #     points = estimate_map.get(est_id, 0)  # default to 0 if not found
-    #     print(f"- {issue.get('name')} (Estimate: {points} SP)")
+    print("=" * 50)
