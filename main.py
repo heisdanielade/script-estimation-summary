@@ -1,7 +1,7 @@
 from typing import Callable
 
 import pyfiglet
-from colorama import init, Fore
+from colorama import init, Fore, Style
 from tabulate import tabulate
 
 from plane_client import PlaneClient
@@ -29,7 +29,7 @@ if __name__ == "__main__":
     print("-" * 50)
 
     print(Fore.GREEN +
-          f"📝 Fetched {len(issues)} issues in {cycle.get("name", "--")} cycle:\n")
+          f"📝 Fetched \033[1m{len(issues)} issues\033[0m:\n")
 
     headers = [
         "Issue",
@@ -40,13 +40,38 @@ if __name__ == "__main__":
         "Completed At"
     ]
 
+    bold_headers = [Fore.YELLOW + f"{item}" +
+                    Style.RESET_ALL for item in headers]
+
     check_availability: Callable[[str],
                                  str] = lambda val: val if val is not None else "n/a"
+
+    def indicate_priority(value: str) -> str:
+        """
+        Return colored text based on issue priority level.
+        """
+        priority_map: dict = {
+            "urgent": 4,
+            "high": 3,
+            "medium": 2,
+            "low": 1,
+            "none": 0
+        }
+        if priority_map.get(value, 0) == 4:
+            return Fore.LIGHTRED_EX + value + Style.RESET_ALL
+        if priority_map.get(value, 0) == 3:
+            return Fore.LIGHTYELLOW_EX + value + Style.RESET_ALL
+        if 0 < priority_map.get(value, 0) <= 2:
+            return Fore.LIGHTBLUE_EX + value + Style.RESET_ALL
+        if priority_map.get(value, 0) == 0:
+            return value
+
+        return value
 
     table = [
         (
             i.get('name'),
-            i.get('priority'),
+            indicate_priority(i.get('priority')),
             i.get('estimate_point')['value'],
             check_availability(i.get('start_date')),
             check_availability(i.get('target_date')),
@@ -55,7 +80,7 @@ if __name__ == "__main__":
         for i in issues
     ]
 
-    print(tabulate(table, headers=headers, showindex=range(
+    print(tabulate(table, headers=bold_headers, showindex=range(
         1, len(table)+1), tablefmt="double_grid", numalign="center") + "\n")
 
     print(Fore.GREEN +
