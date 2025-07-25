@@ -51,22 +51,13 @@ if __name__ == "__main__":
         Return colored text based on issue priority level.
         """
         priority_map: dict = {
-            "urgent": 4,
-            "high": 3,
-            "medium": 2,
-            "low": 1,
-            "none": 0
+            "urgent": Fore.LIGHTRED_EX,
+            "high": Fore.LIGHTYELLOW_EX,
+            "medium": Fore.LIGHTBLUE_EX,
+            "low": Fore.LIGHTBLUE_EX
         }
-        if priority_map.get(value, 0) == 4:
-            return Fore.LIGHTRED_EX + value + Style.RESET_ALL
-        if priority_map.get(value, 0) == 3:
-            return Fore.LIGHTYELLOW_EX + value + Style.RESET_ALL
-        if 0 < priority_map.get(value, 0) <= 2:
-            return Fore.LIGHTBLUE_EX + value + Style.RESET_ALL
-        if priority_map.get(value, 0) == 0:
-            return value
-
-        return value
+        color = priority_map.get(value.lower())
+        return f"{color}{value}{Style.RESET_ALL}" if color else value
 
     table = [
         (
