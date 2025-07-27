@@ -6,13 +6,15 @@ from tabulate import tabulate
 
 from plane_client import PlaneClient
 from estimator import Estimator
+from utils import check_availability
+from utils import indicate_priority
+from utils import indicate_deadline
 
 init(autoreset=True)
 
 
-if __name__ == "__main__":
-    ascii_art = pyfiglet.figlet_format("Plane.so", font="slant")
-    print(ascii_art)
+def main() -> None:
+    """Entry point."""
 
     client = PlaneClient()
     project = client.get_project_details()
@@ -28,8 +30,7 @@ if __name__ == "__main__":
     print(Fore.GREEN + f"🔁 Cycle: \033[1m{cycle.get("name", "--")}\033[0m")
     print("-" * 50)
 
-    print(Fore.GREEN +
-          f"📝 Fetched \033[1m{len(issues)} issues\033[0m:\n")
+    print(Fore.GREEN + f"📝 Fetched \033[1m{len(issues)} issues\033[0m:\n")
 
     headers = [
         "Issue",
@@ -43,29 +44,13 @@ if __name__ == "__main__":
     bold_headers = [Fore.YELLOW + f"{item}" +
                     Style.RESET_ALL for item in headers]
 
-    check_availability: Callable[[str],
-                                 str] = lambda val: val if val is not None else "n/a"
-
-    def indicate_priority(value: str) -> str:
-        """
-        Return colored text based on issue priority level.
-        """
-        priority_map: dict = {
-            "urgent": Fore.LIGHTRED_EX,
-            "high": Fore.LIGHTYELLOW_EX,
-            "medium": Fore.LIGHTBLUE_EX,
-            "low": Fore.LIGHTBLUE_EX
-        }
-        color = priority_map.get(value.lower())
-        return f"{color}{value}{Style.RESET_ALL}" if color else value
-
     table = [
         (
             i.get('name'),
             indicate_priority(i.get('priority')),
             i.get('estimate_point')['value'],
             check_availability(i.get('start_date')),
-            check_availability(i.get('target_date')),
+            indicate_deadline(check_availability(i.get('target_date'))),
             check_availability(i.get('completed_at'))
         )
         for i in issues
@@ -78,3 +63,9 @@ if __name__ == "__main__":
           f"✅ Total Estimation Points: \033[1m{TOTAL_ESTIMATION_POINTS} SP\033[0m")
 
     print("=" * 50)
+
+
+if __name__ == "__main__":
+    ascii_art = pyfiglet.figlet_format("Plane.so", font="slant")
+    print(ascii_art)
+    main()
