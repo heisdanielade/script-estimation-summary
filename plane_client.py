@@ -48,7 +48,7 @@ class PlaneClient:
         url = f"{self.BASE_URL}/workspaces/{workspace_slug}/projects/{project_id}/"
 
         try:
-            response = self.session.get(url)
+            response = self.session.get(url, timeout=10)
             response.raise_for_status()
         except requests.exceptions.RequestException as e:
             raise PlaneAPIError(
@@ -74,7 +74,7 @@ class PlaneClient:
         url = f"{self.BASE_URL}/workspaces/{workspace_slug}/projects/{project_id}/cycles/{cycle_id}"
 
         try:
-            response = self.session.get(url)
+            response = self.session.get(url, timeout=10)
             response.raise_for_status()
         except requests.exceptions.RequestException as e:
             raise PlaneAPIError(
@@ -105,7 +105,7 @@ class PlaneClient:
         }
 
         try:
-            response = self.session.get(url, params=params)
+            response = self.session.get(url, params=params, timeout=10)
             response.raise_for_status()
         except requests.exceptions.RequestException as e:
             raise PlaneAPIError(f"(e) Error fetching isssues: {e}") from e
