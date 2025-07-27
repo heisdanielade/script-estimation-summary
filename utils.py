@@ -24,7 +24,7 @@ def indicate_priority(value: str) -> str:
 def indicate_deadline(date: str, date_format: str = "%Y-%m-%d") -> str:
     """Return colored text to indicate passed issue deadline."""
     try:
-        parsed_date = datetime.strptime(date, date_format)
+        parsed_date = datetime.strptime(date.strip(), date_format)
     except ValueError:
         return date
 
