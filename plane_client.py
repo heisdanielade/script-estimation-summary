@@ -27,9 +27,9 @@ class PlaneClient:
             "Accept": "application/json"
         })
 
-        self.WORKSPACE_SLUG = os.getenv('WORKSPACE_SLUG')
-        self.PROJECT_ID = os.getenv('PROJECT_ID')
-        self.CYCLE_ID = os.getenv('CYCLE_ID')
+        self.workspace_slug = os.getenv('WORKSPACE_SLUG')
+        self.project_id = os.getenv('PROJECT_ID')
+        self.cycle_id = os.getenv('CYCLE_ID')
 
         if not self.TOKEN or not self.BASE_URL:
             raise ValueError("(e) Missing API Base URL or Token")
@@ -41,9 +41,9 @@ class PlaneClient:
             Dictionary with project details
         """
         if workspace_slug is None:
-            workspace_slug = self.WORKSPACE_SLUG
+            workspace_slug = self.workspace_slug
         if project_id is None:
-            project_id = self.PROJECT_ID
+            project_id = self.project_id
 
         url = f"{self.BASE_URL}/workspaces/{workspace_slug}/projects/{project_id}/"
 
@@ -65,11 +65,11 @@ class PlaneClient:
             Dictionary with project details
         """
         if workspace_slug is None:
-            workspace_slug = self.WORKSPACE_SLUG
+            workspace_slug = self.workspace_slug
         if project_id is None:
-            project_id = self.PROJECT_ID
+            project_id = self.project_id
         if cycle_id is None:
-            cycle_id = self.CYCLE_ID
+            cycle_id = self.cycle_id
 
         url = f"{self.BASE_URL}/workspaces/{workspace_slug}/projects/{project_id}/cycles/{cycle_id}"
 
@@ -91,11 +91,11 @@ class PlaneClient:
             List of issues
         """
         if workspace_slug is None:
-            workspace_slug = self.WORKSPACE_SLUG
+            workspace_slug = self.workspace_slug
         if project_id is None:
-            project_id = self.PROJECT_ID
+            project_id = self.project_id
         if cycle_id is None:
-            cycle_id = self.CYCLE_ID
+            cycle_id = self.cycle_id
 
         url = f"{self.BASE_URL}/workspaces/{workspace_slug}/projects/{project_id}/issues/"
 
